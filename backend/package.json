@@ -1,0 +1,37 @@
+{
+  "name": "be",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prisma:setup": "prisma generate",
+    "prisma:makeMigration": "prisma migrate dev",
+    "prisma:setupDefaultUser": "ts-node src/utils/setup.ts",
+    "build": "tsc",
+    "start:server": "node dist/server.js",
+    "start": "npm run prisma:setup && npm run prisma:makeMigration && npm run prisma:setupDefaultUser && npm run build && npm run start:server",
+    "dev": "nodemon src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
+    "express": "^4.21.1",
+    "multer": "^1.4.5-lts.1",
+    "prisma": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.9.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

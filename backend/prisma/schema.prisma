@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt    // Automatically updated on every modification
+  deletedAt DateTime?               // Null if not deleted; timestamp if soft-deleted
+  alerts    Alert[]
+}
+
+model Alert {
+  id          Int       @id @default(autoincrement())
+  sender      String
+  age         Int
+  description String?   @db.VarChar(2000)  // Optional description with a 2000 character limit
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt         // Automatically updated on every modification
+  deletedAt   DateTime?                    // Null if not deleted; timestamp if soft-deleted
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  files       File[]    // Relation to the File model for multiple file uploads
+}
+
+model File {
+  id           Int       @id @default(autoincrement())
+  path         String    // File path in filesystem
+  originalName String    // Original file name as uploaded
+  size         Int       // File size in bytes
+  mimeType     String    // MIME type of the file
+  createdAt    DateTime  @default(now())
+  alertId      Int
+  alert        Alert     @relation(fields: [alertId], references: [id], onDelete: Cascade)
+}
