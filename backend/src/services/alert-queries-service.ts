@@ -15,7 +15,7 @@ const prisma = new PrismaClient();
 
 const getPrismaInstance = (tx?: Prisma.TransactionClient) => tx ?? prisma;
 
-const prepareFilesMetadata = (files: Express.Multer.File[], alertId: number): FilesType => {
+export const prepareFilesMetadata = (files: Express.Multer.File[], alertId: number): FilesType => {
   const fileData = files.map((file) => ({
     path: path.join(UPLOAD_DIRECTORY, file.filename),
     originalName: file.originalname,
@@ -116,7 +116,7 @@ export const deleteFilesByIdsQuery = async (
     });
 
     const filesToDelete = alert.files.filter((file) => fileIds.includes(file.id));
-    
+
     await deleteAlertFiles(filesToDelete);
 
     return deletedFiles.count;

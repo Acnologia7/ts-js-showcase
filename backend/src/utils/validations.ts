@@ -19,7 +19,7 @@ export const validateAlertId = (alertId: ParamsDictionary[string]): number => {
   }
   return parsedAlertId;
 };
-
+/*
 export const validateFileIdsToDelete = (deleteFileIds: string[]): number[] => {
   if (!Array.isArray(deleteFileIds)) {
     throw createError(400, 'deleteFileIds must be an array');
@@ -30,6 +30,23 @@ export const validateFileIdsToDelete = (deleteFileIds: string[]): number[] => {
     if (isNaN(num)) {
       throw createError(400, `Invalid file ID: "${id}" is not a number`);
     }
+    return num;
+  });
+
+  return parsedFileIds;
+};*/
+export const validateFileIdsToDelete = (deleteFileIds: string[]): number[] => {
+  if (!Array.isArray(deleteFileIds)) {
+    throw createError(400, 'deleteFileIds must be an array');
+  }
+
+  const parsedFileIds = deleteFileIds.map((id) => {
+    const num = Number(id);
+
+    if (!id || isNaN(num) || !Number.isInteger(num) || num <= 0) {
+      throw createError(400, `Invalid file ID: "${id}" is not a positive integer`);
+    }
+
     return num;
   });
 
