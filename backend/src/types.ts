@@ -1,22 +1,20 @@
-export type FilesType =
-{
+export type FilesType = {
   path: string;
   originalName: string;
   size: number;
   mimeType: string;
   alertId: number;
-} []
+}[];
 
-export type AlertType =
-{
+export type AlertType = {
   files: {
-      id: number;
-      createdAt: Date;
-      path: string;
-      originalName: string;
-      size: number;
-      mimeType: string;
-      alertId: number;
+    id: number;
+    createdAt: Date;
+    path: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    alertId: number;
   }[];
 } & {
   id: number;
@@ -29,16 +27,15 @@ export type AlertType =
   userId: number;
 };
 
-export type AlertsType =
-({
+export type AlertsType = ({
   files: {
-      id: number;
-      createdAt: Date;
-      path: string;
-      originalName: string;
-      size: number;
-      mimeType: string;
-      alertId: number;
+    id: number;
+    createdAt: Date;
+    path: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    alertId: number;
   }[];
 } & {
   userId: number;

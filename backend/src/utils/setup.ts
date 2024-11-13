@@ -1,13 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
 const prisma = new PrismaClient();
-const DEFAULT_USER_ID = Number(process.env.DEFAULT_USER_ID) || 1
-const UPLOAD_DIRECTORY = path.join(__dirname, process.env.UPLOAD_DIRECTORY || '../../../uploaded_files');
+const DEFAULT_USER_ID = Number(process.env.DEFAULT_USER_ID) || 1;
+const UPLOAD_DIRECTORY = path.join(
+  __dirname,
+  process.env.UPLOAD_DIRECTORY || "../../../uploaded_files"
+);
 
 async function main() {
   if (!fs.existsSync(UPLOAD_DIRECTORY)) {
@@ -21,12 +24,12 @@ async function main() {
     await prisma.user.create({
       data: {
         id: DEFAULT_USER_ID,
-        username: 'default_user',
+        username: "default_user",
       },
     });
-    console.log('Default user created');
+    console.log("Default user created");
   } else {
-    console.log('Default user already exists');
+    console.log("Default user already exists");
   }
 }
 
