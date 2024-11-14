@@ -105,5 +105,5 @@ Run `docker compose up` command
 - not nice looking FE
 - not best UI/UX impression
 - upload file button language is probably based on browser localization
-- not tests for FE
+- no tests for FE
 - few tests for BE (mostly tested via Postman)
