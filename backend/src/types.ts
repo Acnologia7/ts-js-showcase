@@ -47,3 +47,16 @@ export type AlertsType = ({
   updatedAt: Date;
   deletedAt: Date | null;
 })[];
+
+export type CreateAlertRequestBody = {
+  sender: string;
+  age: string;
+  description: string;
+};
+
+export type UpdateAlertRequestBody = {
+  sender?: string;
+  age?: string;
+  description?: string;
+  deleteFileIds?: string;
+};

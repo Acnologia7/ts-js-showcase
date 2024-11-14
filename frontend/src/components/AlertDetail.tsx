@@ -1,28 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getAlertById, updateAlert, deleteAlert } from "../services/api";
+import { Alert, AlertDetailProps, AlertFile } from "../types/alertTypes";
 
-interface AlertDetailProps {
-  alertId: string;
-  onBack: () => void;
-}
-
-const AlertDetail: React.FC<AlertDetailProps> = ({ alertId, onBack }) => {
-  const [alert, setAlert] = useState<any | null>(null);
+const AlertDetail: React.FC<AlertDetailProps> = ({
+  alertId,
+  onBack,
+  onDeleteBack,
+}) => {
+  const [alert, setAlert] = useState<Alert | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
   const [deleteFileIds, setDeleteFileIds] = useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [fileInputKey, setFileInputKey] = useState<number>(0);
+
+  const fetchAlertDetails = useCallback(async () => {
+    try {
+      const data = await getAlertById(alertId);
+      setAlert(data);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch alert details");
+    }
+  }, [alertId]);
 
   useEffect(() => {
-    const fetchAlertDetails = async () => {
-      try {
-        const data = await getAlertById(alertId);
-        setAlert(data);
-      } catch (err) {
-        setError("Failed to fetch alert details");
-      }
-    };
     fetchAlertDetails();
-  }, [alertId]);
+  }, [fetchAlertDetails]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -41,7 +45,7 @@ const AlertDetail: React.FC<AlertDetailProps> = ({ alertId, onBack }) => {
   const handleDelete = async () => {
     try {
       await deleteAlert(alertId);
-      onBack();
+      onDeleteBack();
     } catch (err) {
       setError("Failed to delete alert");
     }
@@ -49,9 +53,15 @@ const AlertDetail: React.FC<AlertDetailProps> = ({ alertId, onBack }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!alert) {
+      setError("Alert data is missing");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("sender", alert.sender);
-    formData.append("age", alert.age);
+    formData.append("age", String(alert.age));
     formData.append("description", alert.description);
 
     filesToUpload.forEach((file) => {
@@ -62,7 +72,15 @@ const AlertDetail: React.FC<AlertDetailProps> = ({ alertId, onBack }) => {
 
     try {
       await updateAlert(alertId, formData);
-      onBack();
+      setSuccessMessage("Alert updated successfully!");
+      setError(null);
+
+      await fetchAlertDetails();
+      setFilesToUpload([]);
+      setDeleteFileIds([]);
+      setFileInputKey((prevKey) => prevKey + 1);
+
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       setError("Failed to update alert");
     }
@@ -107,14 +125,14 @@ const AlertDetail: React.FC<AlertDetailProps> = ({ alertId, onBack }) => {
         <div>
           <h3>Uploaded Files</h3>
           <ul>
-            {alert.files?.map((file: any) => (
+            {alert.files?.map((file: AlertFile) => (
               <li key={file.id}>
                 {file.originalName}{" "}
                 <label>
                   <input
                     type="checkbox"
-                    checked={deleteFileIds.includes(file.id)} // If file ID is in deleteFileIds, check the checkbox
-                    onChange={() => handleFileDeleteChange(file.id)}
+                    checked={deleteFileIds.includes(file.id.toString())}
+                    onChange={() => handleFileDeleteChange(file.id.toString())}
                   />
                   Delete file
                 </label>
@@ -125,11 +143,16 @@ const AlertDetail: React.FC<AlertDetailProps> = ({ alertId, onBack }) => {
 
         <div>
           <label>Upload New Files:</label>
-          <input type="file" multiple onChange={handleFileChange} />
+          <input
+            key={fileInputKey}
+            type="file"
+            multiple
+            onChange={handleFileChange}
+          />
         </div>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
-
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
         <button type="submit">Update Alert</button>
       </form>
 

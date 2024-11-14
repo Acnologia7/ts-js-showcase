@@ -1,10 +1,6 @@
-const AlertItem = ({
-  alert,
-  onSelect,
-}: {
-  alert: any;
-  onSelect: (id: string) => void;
-}) => (
+import { AlertItemProps } from "../types/alertTypes";
+
+const AlertItem: React.FC<AlertItemProps> = ({ alert, onSelect }) => (
   <li>
     <h3>{alert.sender}</h3>
     <p>{alert.description}</p>

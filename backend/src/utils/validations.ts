@@ -8,7 +8,7 @@ const MAX_FILES_ALLOWED = Number(process.env.MAX_FILES_ALLOWED);
 
 export const doesAlertInputsExist = (
   sender: string | undefined,
-  age: string | undefined
+  age: string | number | undefined
 ): void => {
   if (!sender || !age) {
     throw createError(400, "Sender and age are required");
@@ -23,13 +23,17 @@ export const validateAlertId = (alertId: ParamsDictionary[string]): number => {
   return parsedAlertId;
 };
 
-export const validateFileIdsToDelete = (deleteFileIds: string): number[] => {
-  const d = JSON.parse(deleteFileIds);
-  if (!Array.isArray(d)) {
+export const validateFileIdsToDelete = (
+  filesToDelete: string | undefined
+): number[] => {
+  if (!filesToDelete) return [];
+
+  const deleteFileIds = JSON.parse(filesToDelete);
+  if (!Array.isArray(deleteFileIds)) {
     throw createError(400, "deleteFileIds must be an array");
   }
 
-  const parsedFileIds = d.map((id) => {
+  const parsedFileIds = deleteFileIds.map((id) => {
     const num = Number(id);
 
     if (!id || isNaN(num) || !Number.isInteger(num) || num <= 0) {
@@ -60,7 +64,7 @@ export const validateFileCount = (
   }
 };
 
-export const parseAge = (age: string | undefined): number => {
+export const parseAge = (age: string | number | undefined): number => {
   const parsedAge = Number(age);
   if (isNaN(parsedAge) || parsedAge <= 0) {
     throw createError(400, "Age must be a positive integer");

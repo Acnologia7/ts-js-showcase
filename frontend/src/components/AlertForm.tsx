@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { createAlert } from "../services/api";
-
-interface AlertFormProps {
-  onBack: () => void;
-}
+import { AlertFormProps } from "../types/alertTypes";
 
 const AlertForm: React.FC<AlertFormProps> = ({ onBack }) => {
-  const [sender, setSender] = useState("");
+  const [sender, setSender] = useState<string>("");
   const [age, setAge] = useState<number | "">("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string>("");
   const [files, setFiles] = useState<FileList | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +25,13 @@ const AlertForm: React.FC<AlertFormProps> = ({ onBack }) => {
 
     try {
       await createAlert(formData);
-      onBack();
+      setSender("");
+      setAge("");
+      setDescription("");
+      setFiles(null);
+      setError(null);
+      setSuccessMessage("Alert created successfully!");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       setError("Failed to create alert");
     }
@@ -65,6 +69,7 @@ const AlertForm: React.FC<AlertFormProps> = ({ onBack }) => {
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
         <button type="submit">Create Alert</button>
       </form>
       <button onClick={onBack}>Back</button>

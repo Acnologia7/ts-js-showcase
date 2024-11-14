@@ -11,8 +11,8 @@ model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt    // Automatically updated on every modification
-  deletedAt DateTime?               // Null if not deleted; timestamp if soft-deleted
+  updatedAt DateTime  @updatedAt    
+  deletedAt DateTime?              
   alerts    Alert[]
 }
 
@@ -20,21 +20,21 @@ model Alert {
   id          Int       @id @default(autoincrement())
   sender      String
   age         Int
-  description String?   @db.VarChar(2000)  // Optional description with a 2000 character limit
+  description String?   @db.VarChar(2000)  
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt         // Automatically updated on every modification
-  deletedAt   DateTime?                    // Null if not deleted; timestamp if soft-deleted
+  updatedAt   DateTime  @updatedAt         
+  deletedAt   DateTime?                    
   userId      Int
   user        User      @relation(fields: [userId], references: [id])
-  files       File[]    // Relation to the File model for multiple file uploads
+  files       File[]    
 }
 
 model File {
   id           Int       @id @default(autoincrement())
-  path         String    // File path in filesystem
-  originalName String    // Original file name as uploaded
-  size         Int       // File size in bytes
-  mimeType     String    // MIME type of the file
+  path         String    
+  originalName String    
+  size         Int       
+  mimeType     String    
   createdAt    DateTime  @default(now())
   alertId      Int
   alert        Alert     @relation(fields: [alertId], references: [id], onDelete: Cascade)

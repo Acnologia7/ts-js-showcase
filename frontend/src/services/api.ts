@@ -1,7 +1,9 @@
 import axios from "axios";
+import { Alert } from "../types/alertTypes";
 
 const API_URL = process.env.REACT_APP_API_URL;
-export const getAlerts = async () => {
+
+export const getAlerts = async (): Promise<Alert[]> => {
   try {
     const response = await axios.get(`${API_URL}/alerts`);
     return response.data;
@@ -10,7 +12,7 @@ export const getAlerts = async () => {
   }
 };
 
-export const createAlert = async (alertData: FormData) => {
+export const createAlert = async (alertData: FormData): Promise<Alert> => {
   try {
     const response = await axios.post(`${API_URL}/alerts`, alertData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -21,7 +23,7 @@ export const createAlert = async (alertData: FormData) => {
   }
 };
 
-export const getAlertById = async (alertId: string) => {
+export const getAlertById = async (alertId: string): Promise<Alert> => {
   try {
     const response = await axios.get(`${API_URL}/alerts/${alertId}`);
     return response.data;
@@ -30,7 +32,10 @@ export const getAlertById = async (alertId: string) => {
   }
 };
 
-export const updateAlert = async (alertId: string, alertData: FormData) => {
+export const updateAlert = async (
+  alertId: string,
+  alertData: FormData
+): Promise<Alert> => {
   try {
     const response = await axios.put(
       `${API_URL}/alerts/${alertId}`,
@@ -45,7 +50,7 @@ export const updateAlert = async (alertId: string, alertData: FormData) => {
   }
 };
 
-export const deleteAlert = async (alertId: string) => {
+export const deleteAlert = async (alertId: string): Promise<void> => {
   try {
     const response = await axios.delete(`${API_URL}/alerts/${alertId}`);
     return response.data;

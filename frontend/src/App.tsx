@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useState } from "react";
 import AlertList from "./components/AlertList";
 import AlertForm from "./components/AlertForm";
@@ -8,6 +7,7 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<
     "main" | "list" | "form" | "detail"
   >("main");
+
   const [selectedAlertId, setSelectedAlertId] = useState<string | undefined>(
     undefined
   );
@@ -30,22 +30,36 @@ const App: React.FC = () => {
     setSelectedAlertId(undefined);
   };
 
+  const handleBackToList = () => {
+    setCurrentPage("list");
+  };
+
+  const handleOnDeleteBack = () => {
+    setCurrentPage("list");
+  };
+
   return (
     <div>
       {currentPage === "main" && (
         <div>
-          <h1>Evidence schránka důvěry</h1>
-          <button onClick={handleViewAlerts}>Přehled stížností</button>
-          <button onClick={handleCreateAlert}>Vytvořit novou stížnost</button>
+          <h1>Alert Evidence</h1>
+          <button onClick={handleViewAlerts}>View Alert</button>{" "}
+          <button onClick={handleCreateAlert}>Create New Alert</button>{" "}
         </div>
       )}
 
       {currentPage === "list" && (
         <AlertList onSelect={handleSelectAlert} onBack={handleBack} />
       )}
+
       {currentPage === "form" && <AlertForm onBack={handleBack} />}
+
       {currentPage === "detail" && selectedAlertId && (
-        <AlertDetail alertId={selectedAlertId} onBack={handleBack} />
+        <AlertDetail
+          alertId={selectedAlertId}
+          onBack={handleBackToList}
+          onDeleteBack={handleOnDeleteBack}
+        />
       )}
     </div>
   );

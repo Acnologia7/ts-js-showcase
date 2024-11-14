@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import createError from "http-errors";
-
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import {
@@ -23,13 +22,14 @@ import {
   fetchAlertsQuery,
   updateAlertQuery,
 } from "../services/alert-queries-service";
+import { CreateAlertRequestBody, UpdateAlertRequestBody } from "../types";
 
 dotenv.config();
 
 const prisma = new PrismaClient();
 
 export const createAlert = async (
-  req: Request,
+  req: Request<{}, {}, CreateAlertRequestBody>,
   res: Response
 ): Promise<void> => {
   processFiles(req, res, async (processError) => {
@@ -39,8 +39,7 @@ export const createAlert = async (
     }
 
     const { sender, age, description } = req.body;
-    const filesToUpload =
-      (req.files as Express.Multer.File[] | undefined) ?? [];
+    const filesToUpload = (req.files as Express.Multer.File[]) ?? [];
 
     try {
       doesAlertInputsExist(sender, age);
@@ -50,8 +49,8 @@ export const createAlert = async (
         const newAlert = await createAlertQuery(
           sender,
           parsedAge,
-          description,
           filesToUpload,
+          description,
           tx
         );
         return newAlert;
@@ -71,7 +70,7 @@ export const createAlert = async (
 };
 
 export const getAlertById = async (
-  req: Request,
+  req: Request<{ id: string }>,
   res: Response
 ): Promise<void> => {
   try {
@@ -105,7 +104,7 @@ export const getAlerts = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const updateAlert = async (
-  req: Request,
+  req: Request<{ id: string }, {}, UpdateAlertRequestBody>,
   res: Response
 ): Promise<void> => {
   processFiles(req, res, async (processError) => {
@@ -114,9 +113,8 @@ export const updateAlert = async (
       return;
     }
 
-    const { sender, age, description, deleteFileIds = [] } = req.body;
-    const filesToUpload =
-      (req.files as Express.Multer.File[] | undefined) ?? [];
+    const { sender, age, description, deleteFileIds } = req.body;
+    const filesToUpload = (req.files as Express.Multer.File[]) ?? [];
 
     try {
       const alertId = validateAlertId(req.params.id);
@@ -149,7 +147,7 @@ export const updateAlert = async (
         res.status(error.statusCode).json({ error: error.message });
       } else {
         cleanUpStorage(filesToUpload);
-        console.error("Error deleting alert:", error);
+        console.error("Error updating alert:", error);
         res.status(500).json({ error: "Failed to update alert" });
       }
     }
@@ -157,7 +155,7 @@ export const updateAlert = async (
 };
 
 export const deleteAlert = async (
-  req: Request,
+  req: Request<{ id: string }>,
   res: Response
 ): Promise<void> => {
   try {

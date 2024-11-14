@@ -135,8 +135,8 @@ export const deleteFilesByIdsQuery = async (
 export const createAlertQuery = async (
   sender: string,
   age: number,
-  description: string,
   files: Express.Multer.File[],
+  description?: string,
   tx?: Prisma.TransactionClient,
   userId: number = DEFAULT_USER_ID
 ): Promise<AlertType> => {

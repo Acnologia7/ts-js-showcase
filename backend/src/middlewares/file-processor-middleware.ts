@@ -9,9 +9,10 @@ dotenv.config();
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const MAX_FILE_COUNT = 3;
-const ALLOWED_MIME_TYPES = process.env.ALLOWED_MIME_TYPES || [
-  "application/pdf",
-];
+
+const ALLOWED_MIME_TYPES =
+  process.env.ALLOWED_MIME_TYPES || "application/pdf".split(", ");
+
 const UPLOAD_DIRECTORY = path.join(
   __dirname,
   process.env.UPLOAD_DIRECTORY || "../../../uploaded_files"
@@ -33,10 +34,17 @@ const fileFilter = (
   file: Express.Multer.File,
   cb: FileFilterCallback
 ) => {
-  if (ALLOWED_MIME_TYPES?.includes(file.mimetype)) {
+  const normalizedMimeType = file.mimetype.toLowerCase();
+
+  if (ALLOWED_MIME_TYPES.includes(normalizedMimeType)) {
     cb(null, true);
   } else {
-    cb(createError(400, "Invalid file type"));
+    cb(
+      createError(
+        400,
+        `Invalid file type: ${file.mimetype}. Allowed types are: ${ALLOWED_MIME_TYPES}`
+      )
+    );
   }
 };
 
@@ -49,11 +57,11 @@ export const processFiles = multer({
   fileFilter,
 }).array("files", MAX_FILE_COUNT);
 
+// Cleanup function if necessary
 export const cleanUpStorage = async (filesToCleanUp: Express.Multer.File[]) => {
-  if (filesToCleanUp) {
-    const files = filesToCleanUp as Express.Multer.File[];
+  if (filesToCleanUp && Array.isArray(filesToCleanUp)) {
     try {
-      await Promise.all(files.map((file) => fs.unlink(file.path)));
+      await Promise.all(filesToCleanUp.map((file) => fs.unlink(file.path)));
       console.log("Cleaned up uploaded files due to error in custom logic");
     } catch (cleanupErr) {
       console.error("Error during file cleanup:", cleanupErr);
