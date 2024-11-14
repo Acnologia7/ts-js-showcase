@@ -4,7 +4,7 @@
 
 ### Docker
 
-1. Make sure you have working Docker on your system
+Make sure you have working Docker on your system
 
 ### Clone this repo
 
@@ -35,7 +35,7 @@ FRONTEND_PORT=3000
 REACT_APP_API_URL="http://localhost:${SERVER_PORT}/api"
 ```
 
-### 3. Build and start app
+### 2. Build and start app
 
 Run `docker compose up` command
 
