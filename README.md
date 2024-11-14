@@ -4,7 +4,7 @@
 
 ### Docker
 
-1. Make sure you have working Docker on your system
+Make sure you have working Docker on your system
 
 ### Clone this repo
 
@@ -35,7 +35,7 @@ FRONTEND_PORT=3000
 REACT_APP_API_URL="http://localhost:${SERVER_PORT}/api"
 ```
 
-### 3. Build and start app
+### 2. Build and start app
 
 Run `docker compose up` command
 
@@ -105,5 +105,5 @@ Run `docker compose up` command
 - not nice looking FE
 - not best UI/UX impression
 - upload file button language is probably based on browser localization
-- not tests for FE
+- no tests for FE
 - few tests for BE (mostly tested via Postman)
